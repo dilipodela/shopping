@@ -1,10 +1,11 @@
 import React from 'react';
 import { ScrollView, View } from 'react-native';
-import BottomNavBar from '../components/home/BottomNavBar';
-import CategoryList from '../components/home/CategoryList';
-import HomeHeader from '../components/home/HomeHeader';
-import ProductGrid from '../components/home/ProductGrid';
-import PromoBanner from '../components/home/PromoBanner';
+// BottomNavBar removed
+import MiniCartBar from '../../components/bag/MiniCartBar';
+import CategoryList from '../../components/home/CategoryList';
+import HomeHeader from '../../components/home/HomeHeader';
+import ProductGrid from '../../components/home/ProductGrid';
+import PromoBanner from '../../components/home/PromoBanner';
 
 export default function Index() {
   return (
@@ -19,8 +20,7 @@ export default function Index() {
         <ProductGrid />
       </ScrollView>
 
-      {/* Fixed Bottom Navigation */}
-      <BottomNavBar />
+      <MiniCartBar />
     </View>
   );
 }

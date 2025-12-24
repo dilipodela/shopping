@@ -23,7 +23,9 @@ export default function RootLayout() {
                 headerShown: false,
                 animation: 'slide_from_right',
                 animationDuration: 250
-              }} />
+              }}>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              </Stack>
               <ProductDetailModal />
               <SideDrawer />
               {isSplashVisible && <SplashScreen onFinish={() => setSplashVisible(false)} />}

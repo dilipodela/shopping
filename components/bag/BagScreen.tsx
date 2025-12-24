@@ -31,7 +31,7 @@ export default function BagScreen() {
                             className="bg-black px-8 py-3 rounded-full"
                             onPress={() => {
                                 router.dismissAll();
-                                router.replace('/');
+                                router.navigate('/' as any);
                             }}
                         >
                             <Text className="text-white font-bold">Start Shopping</Text>
@@ -66,7 +66,7 @@ export default function BagScreen() {
                                             </View>
                                         </View>
                                     </View>
-                                    <Text className="text-gray-900 font-bold text-base">QAR {item.product.price * item.quantity}.00</Text>
+                                    <Text className="text-gray-900 font-bold text-base">₹ {item.product.price * item.quantity}.00</Text>
                                 </View>
                             </View>
                         ))}
@@ -82,7 +82,7 @@ export default function BagScreen() {
                     <View className="flex-row items-center justify-between">
                         <View>
                             <Text className="text-gray-500 text-xs uppercase tracking-wider font-medium">Total</Text>
-                            <Text className="text-xl font-semibold text-gray-900">QAR {totalPrice}.00</Text>
+                            <Text className="text-xl font-semibold text-gray-900">₹ {totalPrice}.00</Text>
                         </View>
 
                         <TouchableOpacity className="bg-black px-8 py-3 rounded-full flex-row items-center shadow-lg active:scale-95">

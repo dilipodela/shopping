@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, Image, Modal, PanResponder, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, BackHandler, Dimensions, Image, PanResponder, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useBag } from '../../context/BagContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useProductDetail } from '../../context/ProductDetailContext';
@@ -65,10 +65,23 @@ export default function ProductDetailModal() {
             Animated.spring(slideAnim, {
                 toValue: 0,
                 useNativeDriver: true,
-                damping: 15,
+                damping: 18,
                 mass: 1,
                 stiffness: 120,
             }).start();
+
+            // Handle Hardware Back Button
+            const backAction = () => {
+                closeProduct();
+                return true; // Disable default behavior
+            };
+
+            const backHandler = BackHandler.addEventListener(
+                "hardwareBackPress",
+                backAction
+            );
+
+            return () => backHandler.remove();
         }
     }, [selectedProduct]);
 
@@ -76,36 +89,55 @@ export default function ProductDetailModal() {
         if (!selectedProduct) return;
         addToBag(selectedProduct, selectedSize);
 
-        // Show Success Animation
-        setShowSuccess(true);
-        Animated.sequence([
-            Animated.spring(successAnim, {
-                toValue: 1,
-                useNativeDriver: true,
-                damping: 15,
-            }),
-            Animated.delay(1500),
-            Animated.timing(successAnim, {
-                toValue: 0,
-                duration: 200,
-                useNativeDriver: true,
-            })
-        ]).start(() => {
-            setShowSuccess(false);
-            closeProduct();
+        // 1. Close Card First (Slide Down)
+        Animated.timing(slideAnim, {
+            toValue: SCREEN_HEIGHT,
+            duration: 300,
+            useNativeDriver: true,
+        }).start(() => {
+            // 2. Show Success Message
+            setShowSuccess(true);
+            Animated.sequence([
+                Animated.spring(successAnim, {
+                    toValue: 1,
+                    useNativeDriver: true,
+                    damping: 15,
+                }),
+                Animated.delay(800), // Wait for 1 second
+                Animated.timing(successAnim, {
+                    toValue: 0,
+                    duration: 200,
+                    useNativeDriver: true,
+                })
+            ]).start(() => {
+                setShowSuccess(false);
+                closeProduct();
+            });
         });
     };
 
     if (!selectedProduct) return null;
 
     return (
-        <Modal
-            visible={!!selectedProduct}
-            transparent
-            animationType="none"
-            onRequestClose={closeProduct}
+        <View
+            className="absolute inset-0 z-50"
+            pointerEvents="box-none"
         >
-            <View className="flex-1 bg-black/50 justify-end relative">
+            <View className="flex-1 justify-end relative" pointerEvents="box-none">
+                {/* Animated Backdrop */}
+                <Animated.View
+                    className="absolute inset-0 bg-black"
+                    pointerEvents={showSuccess ? 'none' : 'auto'}
+                    style={{
+                        opacity: slideAnim.interpolate({
+                            inputRange: [0, SCREEN_HEIGHT],
+                            outputRange: [0.5, 0],
+                            extrapolate: 'clamp',
+                        })
+                    }}
+                />
+
+
                 {/* Dismiss Touch Area */}
                 <TouchableOpacity
                     className="flex-1"
@@ -196,7 +228,7 @@ export default function ProductDetailModal() {
                             </View>
 
                             <Text className="text-3xl font-bold text-gray-900 mt-4 mb-6">
-                                QAR {selectedProduct.price}.00
+                                ₹ {selectedProduct.price}.00
                             </Text>
 
                             <Text className="text-gray-900 font-bold mb-2 text-lg">Description</Text>
@@ -223,7 +255,7 @@ export default function ProductDetailModal() {
                     <View className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex-row items-center pb-8 safe-bottom">
                         <View className="flex-1 mr-4">
                             <Text className="text-gray-500 text-xs">Total Price</Text>
-                            <Text className="text-xl font-bold text-gray-900">QAR {selectedProduct.price * (getItemQuantity(selectedProduct.id, selectedSize) || 1)}</Text>
+                            <Text className="text-xl font-bold text-gray-900">₹ {selectedProduct.price * (getItemQuantity(selectedProduct.id, selectedSize) || 1)}</Text>
                         </View>
 
                         {getItemQuantity(selectedProduct.id, selectedSize) > 0 ? (
@@ -258,6 +290,6 @@ export default function ProductDetailModal() {
                     </View>
                 </Animated.View>
             </View>
-        </Modal>
+        </View>
     );
 }

@@ -56,7 +56,7 @@ export default function FavoritesScreen() {
                                     <Text className="text-gray-900 font-semibold text-sm" numberOfLines={1}>{product.name}</Text>
                                     <Text className="text-gray-500 text-xs mb-1">{product.brand}</Text>
                                     <Text className="text-gray-900 font-bold text-sm mt-1">
-                                        QAR {product.price}.00
+                                        ₹ {product.price}.00
                                     </Text>
                                 </View>
                             </TouchableOpacity>
