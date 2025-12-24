@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Animated, View } from 'react-native';
 // BottomNavBar removed
 import MiniCartBar from '../../components/bag/MiniCartBar';
@@ -10,6 +10,7 @@ import PromoBanner from '../../components/home/PromoBanner';
 export default function Index() {
   // 1. Track Scroll Position
   const scrollY = useRef(new Animated.Value(0)).current;
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   // 2. Clone ScrollY but clamp the *change* (diff) between 0 and 100
   // interacting with scroll down pushes it to 100 (hidden)
@@ -39,9 +40,9 @@ export default function Index() {
         )}
         scrollEventThrottle={16}
       >
-        <CategoryList />
+        <CategoryList selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
         <PromoBanner />
-        <ProductGrid />
+        <ProductGrid category={selectedCategory} />
       </Animated.ScrollView>
 
       {/* Animated Mini Cart Bar */}

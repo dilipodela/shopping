@@ -8,13 +8,16 @@ import { useProductDetail } from '../../context/ProductDetailContext';
 
 interface ProductGridProps {
     products?: typeof PRODUCTS;
+    category?: string | null;
 }
 
-export default function ProductGrid({ products }: ProductGridProps) {
+export default function ProductGrid({ products, category }: ProductGridProps) {
     const { toggleFavorite, isFavorite } = useFavorites();
     const { openProduct } = useProductDetail();
 
-    const displayProducts = products || PRODUCTS;
+    const displayProducts = products || (category
+        ? PRODUCTS.filter(p => p.category === category)
+        : PRODUCTS);
 
     return (
         <View className="px-4 pb-24 flex-row flex-wrap justify-between relative z-0">

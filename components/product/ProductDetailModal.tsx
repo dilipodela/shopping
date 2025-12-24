@@ -1,11 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, BackHandler, Dimensions, Image, PanResponder, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, BackHandler, Dimensions, Image, PanResponder, ScrollView, Share, Text, TouchableOpacity, View } from 'react-native';
 import { useBag } from '../../context/BagContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useProductDetail } from '../../context/ProductDetailContext';
 
+import { Asset } from 'expo-asset';
+import * as FileSystem from 'expo-file-system/legacy';
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 import FullScreenImageViewer from './FullScreenImageViewer';
 
@@ -27,7 +30,6 @@ export default function ProductDetailModal() {
 
     // Carousel State
     const scrollX = useRef(new Animated.Value(0)).current;
-    const { width } = Dimensions.get('window');
 
     // Animation Values
     const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
@@ -131,6 +133,52 @@ export default function ProductDetailModal() {
         });
     };
 
+    const handleShare = async () => {
+        if (!selectedProduct) return;
+
+        const message = `Check out this ${selectedProduct.name} on Hello Gorgeous!\nPrice: ₹${selectedProduct.price}\n\nGet it here: https://hellogorgeous.app/product/${selectedProduct.id}`;
+
+        try {
+            let imageUri = null;
+
+            if (typeof selectedProduct.image === 'string') {
+                const extension = selectedProduct.image.split('.').pop()?.split('?')[0];
+                // Ensure valid extension or default to jpg
+                const validExt = ['jpg', 'jpeg', 'png'].includes(extension?.toLowerCase() || '') ? extension : 'jpg';
+                const filename = `share_${selectedProduct.id}.${validExt}`;
+
+                const fileUri = (FileSystem.cacheDirectory || FileSystem.documentDirectory) + filename;
+
+                const { uri } = await FileSystem.downloadAsync(selectedProduct.image, fileUri);
+                imageUri = uri;
+            } else {
+                const asset = Asset.fromModule(selectedProduct.image);
+                await asset.downloadAsync();
+                imageUri = asset.localUri || asset.uri;
+            }
+
+            if (imageUri) {
+                // Try React Native Share first to support Text + Image
+                await Share.share({
+                    message: message,
+                    url: imageUri, // iOS supports local file URI
+                    title: `Share ${selectedProduct.name}`
+                });
+            } else {
+                await Share.share({
+                    message: message,
+                    title: `Share ${selectedProduct.name}`
+                });
+            }
+        } catch (error: any) {
+            console.error("Sharing Error:", error);
+            // Fallback
+            await Share.share({
+                message: message,
+            });
+        }
+    };
+
     if (!selectedProduct) return null;
 
     return (
@@ -146,9 +194,7 @@ export default function ProductDetailModal() {
             />
 
             <View className="flex-1 justify-end relative" pointerEvents="box-none">
-                {/* ... (Backdrop remains same) */}
-
-                {/* Animated Backdrop */}
+                {/* Backdrop */}
                 <Animated.View
                     className="absolute inset-0 bg-black"
                     pointerEvents={showSuccess ? 'none' : 'auto'}
@@ -161,7 +207,6 @@ export default function ProductDetailModal() {
                     }}
                 />
 
-
                 {/* Dismiss Touch Area */}
                 <TouchableOpacity
                     className="flex-1"
@@ -169,8 +214,7 @@ export default function ProductDetailModal() {
                     onPress={closeProduct}
                 />
 
-                {/* ... (Success Notification remains same) */}
-
+                {/* Main Modal Content */}
                 <Animated.View
                     style={{
                         transform: [{ translateY: slideAnim }],
@@ -178,7 +222,7 @@ export default function ProductDetailModal() {
                     }}
                     className="bg-white rounded-t-3xl overflow-hidden shadow-2xl absolute bottom-0 left-0 right-0"
                 >
-                    {/* Handle Bar - Draggable Area */}
+                    {/* Handle Bar */}
                     <View
                         {...panResponder.panHandlers}
                         className="items-center pt-4 pb-2 bg-white z-10 w-full"
@@ -247,22 +291,33 @@ export default function ProductDetailModal() {
                             )}
 
 
-                            <TouchableOpacity
-                                className="absolute top-4 right-4 bg-white/90 p-3 rounded-full shadow-sm"
-                                onPress={() => toggleFavorite(selectedProduct.id)}
-                            >
-                                <Ionicons
-                                    name={isFavorite(selectedProduct.id) ? "heart" : "heart-outline"}
-                                    size={24}
-                                    color={isFavorite(selectedProduct.id) ? "#EF4444" : "#000"}
-                                />
-                            </TouchableOpacity>
+                            <View className="absolute top-4 right-4">
+                                <TouchableOpacity
+                                    className="bg-white/90 p-2 rounded-full shadow-sm"
+                                    onPress={() => toggleFavorite(selectedProduct.id)}
+                                >
+                                    <Ionicons
+                                        name={isFavorite(selectedProduct.id) ? "heart" : "heart-outline"}
+                                        size={20}
+                                        color={isFavorite(selectedProduct.id) ? "#EF4444" : "#000"}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+
+                            <View className="absolute bottom-4 right-4">
+                                <TouchableOpacity
+                                    className="bg-white/90 p-2 rounded-full shadow-sm"
+                                    onPress={handleShare}
+                                >
+                                    <Ionicons name="share-social-outline" size={20} color="#000" />
+                                </TouchableOpacity>
+                            </View>
 
                             <TouchableOpacity
                                 className="absolute top-4 left-4 bg-white/90 p-2 rounded-full shadow-sm"
                                 onPress={closeProduct}
                             >
-                                <Ionicons name="close" size={24} color="#000" />
+                                <Ionicons name="close" size={20} color="#000" />
                             </TouchableOpacity>
                         </View>
 
