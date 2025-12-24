@@ -81,6 +81,7 @@ function GridCard({ product, openProduct, toggleFavorite, isFavorite }: any) {
                     <Image
                         source={typeof product.image === 'string' ? { uri: product.image } : product.image}
                         className="w-full h-full"
+                        style={{ width: '100%', height: '100%' }}
                         resizeMode="cover"
                     />
                 </View>

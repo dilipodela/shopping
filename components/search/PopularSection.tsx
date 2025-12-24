@@ -88,6 +88,7 @@ function PopularCard({ item, openProduct, toggleFavorite, isFavorite }: any) {
                     <Image
                         source={typeof item.image === 'string' ? { uri: item.image } : item.image}
                         className="w-full h-full"
+                        style={{ width: '100%', height: '100%' }}
                         resizeMode="contain"
                     />
                     <View className="absolute top-3 left-3 bg-black/80 px-2 py-1 rounded-md">

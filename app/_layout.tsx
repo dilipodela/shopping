@@ -1,6 +1,5 @@
 import { Stack } from "expo-router";
 import { useState } from "react";
-import { View } from "react-native";
 import SideDrawer from "../components/common/SideDrawer";
 import ProductDetailModal from "../components/product/ProductDetailModal";
 import SplashScreen from "../components/SplashScreen";
@@ -10,6 +9,8 @@ import { FavoritesProvider } from "../context/FavoritesContext";
 import { ProductDetailProvider } from "../context/ProductDetailContext";
 import "./global.css";
 
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 export default function RootLayout() {
   const [isSplashVisible, setSplashVisible] = useState(true);
 
@@ -18,7 +19,7 @@ export default function RootLayout() {
       <BagProvider>
         <ProductDetailProvider>
           <DrawerProvider>
-            <View style={{ flex: 1 }}>
+            <GestureHandlerRootView style={{ flex: 1 }}>
               <Stack screenOptions={{
                 headerShown: false,
                 animation: 'slide_from_right',
@@ -29,7 +30,7 @@ export default function RootLayout() {
               <ProductDetailModal />
               <SideDrawer />
               {isSplashVisible && <SplashScreen onFinish={() => setSplashVisible(false)} />}
-            </View>
+            </GestureHandlerRootView>
           </DrawerProvider>
         </ProductDetailProvider>
       </BagProvider>

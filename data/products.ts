@@ -7,18 +7,59 @@ export interface Product {
     rating: number;
     isNew?: boolean;
     category?: string;
+    images?: any[];
 }
 
 export const PRODUCTS: Product[] = [
     // --- Dresses / Caftans ---
-    { id: 1, name: 'Red Caftan', brand: 'hellogorgeous', price: 292, rating: 5, isNew: true, category: 'Caftan', image: 'https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?auto=format&fit=crop&w=400&q=80' },
-    { id: 3, name: 'Summer Dress', brand: 'hellogorgeous', price: 350, rating: 5, category: 'Dress', image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=400&q=80' },
-    { id: 7, name: 'Blue Maxi', brand: 'hellogorgeous', price: 420, rating: 4, category: 'Dress', image: 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=400&q=80' },
+    {
+        id: 1, name: 'Red Caftan', brand: 'hellogorgeous', price: 292, rating: 5, isNew: true, category: 'Caftan',
+        image: 'https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?auto=format&fit=crop&w=400&q=80',
+        images: [
+            'https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?auto=format&fit=crop&w=800&q=80'
+        ]
+    },
+    {
+        id: 3, name: 'Summer Dress', brand: 'hellogorgeous', price: 350, rating: 5, category: 'Dress',
+        image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=400&q=80',
+        images: [
+            'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80',
+        ]
+    },
+    {
+        id: 7,
+        name: 'Blue Maxi',
+        brand: 'hellogorgeous',
+        price: 420,
+        rating: 4,
+        category: 'Dress',
+        image: 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=400&q=80',
+        images: [
+            'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1572804013427-4d7ca7268217?auto=format&fit=crop&w=800&q=80',
+            require('../assets/images/app4.jpg')
+        ]
+    },
     { id: 8, name: 'Evening Gown', brand: 'Luxe', price: 850, rating: 5, category: 'Dress', image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=400&q=80' },
     { id: 9, name: 'Boho Dress', brand: 'FreeSpirit', price: 180, rating: 3, category: 'Dress', image: 'https://images.unsplash.com/photo-1612336307429-8a898d10e223?auto=format&fit=crop&w=400&q=80' },
 
     // --- Tops ---
-    { id: 2, name: 'Black Top', brand: 'hellogorgeous', price: 412, rating: 4, isNew: true, category: 'Top', image: 'https://images.unsplash.com/photo-1589810635657-232948472d98?auto=format&fit=crop&w=400&q=80' },
+    {
+        id: 2, name: 'Black Top', brand: 'hellogorgeous', price: 412, rating: 4, isNew: true, category: 'Top',
+        image: 'https://images.unsplash.com/photo-1589810635657-232948472d98?auto=format&fit=crop&w=400&q=80',
+        images: [
+            'https://images.unsplash.com/photo-1589810635657-232948472d98?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1503185912284-5271ff81b9a8?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1554568218-0f1715e72254?auto=format&fit=crop&w=800&q=80'
+        ]
+    },
     { id: 5, name: 'Floral Blouse', brand: 'hellogorgeous', price: 220, rating: 5, category: 'Top', image: 'https://images.unsplash.com/photo-1554568218-0f1715e72254?auto=format&fit=crop&w=400&q=80' },
     { id: 10, name: 'White Shirt', brand: 'Basics', price: 90, rating: 4, category: 'Top', image: 'https://images.unsplash.com/photo-1598554747436-c9293d6a588f?auto=format&fit=crop&w=400&q=80' },
     { id: 11, name: 'Crop Top', brand: 'Trendy', price: 60, rating: 4, category: 'Top', image: 'https://images.unsplash.com/photo-1503185912284-5271ff81b9a8?auto=format&fit=crop&w=400&q=80' },
