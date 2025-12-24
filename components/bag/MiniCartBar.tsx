@@ -13,7 +13,7 @@ export default function MiniCartBar() {
     const totalItems = bagItems.reduce((acc, item) => acc + item.quantity, 0);
 
     return (
-        <View className="absolute bottom-[85px] left-4 right-4 z-50">
+        <View className="">
             <TouchableOpacity
                 onPress={() => router.push('/bag')}
                 className="bg-green-600 rounded-2xl p-4 flex-row items-center justify-between shadow-lg shadow-green-200"

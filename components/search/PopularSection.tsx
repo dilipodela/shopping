@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React, { useRef } from 'react';
-import { Animated, Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Image, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useProductDetail } from '../../context/ProductDetailContext';
 import { PRODUCTS } from '../../data/products';
@@ -8,19 +9,26 @@ import { PRODUCTS } from '../../data/products';
 export default function PopularSection() {
     const { toggleFavorite, isFavorite } = useFavorites();
     const { openProduct } = useProductDetail();
-    // Filter for "Popular" items - here we just assume "New" items are popular
+    const router = useRouter(); // Initialize router
+    // Filter for "Popular" items
     const popularItems = PRODUCTS.filter(p => p.isNew);
 
     return (
-        <View className="mt-4 px-4">
+        <View className="mt-4">
             {/* Header */}
-            <View className="flex-row justify-between items-center mb-4">
-                <Text className="text-lg font-bold">Popular this week</Text>
-                <Text className="text-gray-400 text-sm">View all</Text>
+            <View className="flex-row justify-between items-center mb-4 px-4">
+                <Text className="text-lg font-bold text-gray-900">Popular this week</Text>
+                <TouchableOpacity onPress={() => router.push('/popular-items')}>
+                    <Text className="text-orange-500 font-medium text-sm">View all</Text>
+                </TouchableOpacity>
             </View>
 
-            {/* Grid */}
-            <View className="flex-row flex-wrap justify-between pb-24 relative z-0">
+            {/* Horizontal Scroll List */}
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
+            >
                 {popularItems.map((item) => (
                     <PopularCard
                         key={item.id}
@@ -30,7 +38,7 @@ export default function PopularSection() {
                         isFavorite={isFavorite}
                     />
                 ))}
-            </View>
+            </ScrollView>
         </View>
     );
 }
@@ -41,7 +49,7 @@ function PopularCard({ item, openProduct, toggleFavorite, isFavorite }: any) {
     // Animation Handlers
     const handlePressIn = () => {
         Animated.spring(scaleAnim, {
-            toValue: 1.05,
+            toValue: 0.95,
             useNativeDriver: true,
             friction: 5,
             tension: 40
@@ -68,29 +76,25 @@ function PopularCard({ item, openProduct, toggleFavorite, isFavorite }: any) {
             onPressIn={handlePressIn}
             onPressOut={handlePressOut}
             onPress={handlePress}
-            style={{ width: '48%', marginBottom: 16 }}
+            style={{ marginRight: 16 }}
         >
             <Animated.View
-                className="bg-white rounded-lg shadow-md pb-2"
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 w-64 pb-3"
                 style={{
                     transform: [{ scale: scaleAnim }],
-                    zIndex: scaleAnim.interpolate({
-                        inputRange: [1, 1.05],
-                        outputRange: [0, 10]
-                    })
                 }}
             >
-                <View className="h-64 w-full rounded-lg overflow-hidden bg-gray-100 relative">
+                <View className="h-40 w-full rounded-t-2xl overflow-hidden bg-gray-50 relative">
                     <Image
                         source={typeof item.image === 'string' ? { uri: item.image } : item.image}
                         className="w-full h-full"
-                        resizeMode="cover"
+                        resizeMode="contain"
                     />
-                    <View className="absolute top-2 left-2 bg-white px-2 py-1 rounded-full">
-                        <Text className="text-[10px] font-bold">NEW</Text>
+                    <View className="absolute top-3 left-3 bg-black/80 px-2 py-1 rounded-md">
+                        <Text className="text-[10px] font-bold text-white tracking-widest">NEW</Text>
                     </View>
                     <TouchableOpacity
-                        className="absolute top-2 right-2 bg-white/80 p-1.5 rounded-full"
+                        className="absolute top-3 right-3 bg-white p-1.5 rounded-full shadow-sm"
                         onPress={() => toggleFavorite(item.id)}
                     >
                         <Ionicons
@@ -101,23 +105,23 @@ function PopularCard({ item, openProduct, toggleFavorite, isFavorite }: any) {
                     </TouchableOpacity>
                 </View>
 
-                <View className="mt-2 p-2">
-                    <View className="flex-row justify-between items-start">
-                        <View>
-                            <Text className="text-gray-900 font-bold text-lg">{item.name}</Text>
-                            <Text className="text-gray-400 text-xs mb-1">{item.brand}</Text>
+                <View className="px-3 pt-3">
+                    <Text className="text-gray-400 text-xs font-medium uppercase tracking-wider mb-1">{item.brand}</Text>
+                    <Text className="text-gray-900 font-bold text-base leading-5 mb-1" numberOfLines={1}>{item.name}</Text>
+
+                    <View className="flex-row items-center mb-2">
+                        <Ionicons name="star" size={14} color="#F59E0B" />
+                        <Text className="text-gray-600 text-xs font-bold ml-1">{item.rating} (120 reviews)</Text>
+                    </View>
+
+                    <View className="flex-row items-center justify-between mt-1">
+                        <Text className="text-gray-900 font-extrabold text-lg">
+                            ₹{item.price}
+                        </Text>
+                        <View className="bg-gray-100 p-1.5 rounded-full">
+                            <Ionicons name="add" size={16} color="black" />
                         </View>
                     </View>
-
-                    <View className="flex-row items-center mt-1">
-                        {[...Array(5)].map((_, i) => (
-                            <Ionicons key={i} name="star" size={13} color={i < item.rating ? "#F59E0B" : "#E5E7EB"} />
-                        ))}
-                    </View>
-
-                    <Text className="text-gray-900 font-bold text-lg mt-2">
-                        ₹ {item.price}.00
-                    </Text>
                 </View>
             </Animated.View>
         </Pressable>

@@ -6,13 +6,19 @@ import { PRODUCTS } from '../../data/products';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useProductDetail } from '../../context/ProductDetailContext';
 
-export default function ProductGrid() {
+interface ProductGridProps {
+    products?: typeof PRODUCTS;
+}
+
+export default function ProductGrid({ products }: ProductGridProps) {
     const { toggleFavorite, isFavorite } = useFavorites();
     const { openProduct } = useProductDetail();
 
+    const displayProducts = products || PRODUCTS;
+
     return (
         <View className="px-4 pb-24 flex-row flex-wrap justify-between relative z-0">
-            {PRODUCTS.map((product) => (
+            {displayProducts.map((product) => (
                 <GridCard
                     key={product.id}
                     product={product}

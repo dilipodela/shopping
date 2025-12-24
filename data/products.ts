@@ -49,4 +49,12 @@ export const PRODUCTS: Product[] = [
     { id: 28, name: 'Swimsuit', brand: 'Beach', price: 150, rating: 4, image: 'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?auto=format&fit=crop&w=400&q=80' },
     { id: 29, name: 'Cardigan', brand: 'Layers', price: 200, rating: 4, image: 'https://images.unsplash.com/photo-1516762689617-e1cffcef479d?auto=format&fit=crop&w=400&q=80' },
     { id: 30, name: 'Jumpsuit', brand: 'Trendy', price: 320, rating: 5, image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=400&q=80' },
+
+    // --- Popular This Week (Unique Additions) ---
+    { id: 31, name: 'Velvet Blazer', brand: 'Royal', price: 850, rating: 5, isNew: true, category: 'Jacket', image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=400&q=80' },
+    { id: 32, name: 'Floral Maxi', brand: 'Bloom', price: 420, rating: 4, isNew: true, category: 'Dress', image: 'https://images.unsplash.com/photo-1572804013427-4d7ca7268217?auto=format&fit=crop&w=400&q=80' },
+    { id: 33, name: 'Cargo Pants', brand: 'Street', price: 280, rating: 4, isNew: true, category: 'Bottoms', image: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=400&q=80' },
+    { id: 34, name: 'Silk Scarf', brand: 'Elegance', price: 150, rating: 5, isNew: true, category: 'Accessories', image: 'https://images.unsplash.com/photo-1584030373081-f37b7bb4fa8e?auto=format&fit=crop&w=400&q=80' },
+    { id: 35, name: 'Leather Boots', brand: 'Rugged', price: 1200, rating: 5, isNew: true, category: 'Shoes', image: 'https://images.unsplash.com/photo-1608256246200-53e635b5b69f?auto=format&fit=crop&w=400&q=80' },
+    { id: 36, name: 'Puffer Jacket', brand: 'Urban', price: 950, rating: 4, isNew: true, category: 'Jacket', image: 'https://images.unsplash.com/photo-1545563976-a095642d9afb?auto=format&fit=crop&w=400&q=80' },
 ];

@@ -5,9 +5,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface SearchHeaderProps {
     onFilterPress?: () => void;
+    onSearch?: (text: string) => void;
 }
 
-export default function SearchHeader({ onFilterPress }: SearchHeaderProps) {
+export default function SearchHeader({ onFilterPress, onSearch }: SearchHeaderProps) {
     const insets = useSafeAreaInsets();
 
     return (
@@ -28,6 +29,7 @@ export default function SearchHeader({ onFilterPress }: SearchHeaderProps) {
                         placeholder="Search"
                         className="flex-1 ml-2 text-gray-700 font-normal"
                         placeholderTextColor="#9CA3AF"
+                        onChangeText={onSearch}
                     />
                 </View>
                 <TouchableOpacity
