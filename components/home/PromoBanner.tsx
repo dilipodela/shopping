@@ -1,30 +1,68 @@
-import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { Image, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { Dimensions, Image, ScrollView, View } from 'react-native';
+
+const { width } = Dimensions.get('window');
+const GAP = 12; // Gap between banners
+const ITEM_WIDTH = width - 32; // Screen width - 32px padding
+const SNAP_INTERVAL = ITEM_WIDTH + GAP;
+
+const images = [
+    require('../../assets/images/banner1.jpg'),
+    require('../../assets/images/banner2.jpg'),
+    require('../../assets/images/banner3.jpg'),
+    require('../../assets/images/banner4.jpg'),
+];
 
 export default function PromoBanner() {
-    return (
-        <View className="mx-4 my-4 h-48 bg-teal-600 rounded-xl overflow-hidden flex-row relative">
-            {/* Content Overlay */}
-            <View className="z-10 absolute left-6 top-6">
-                <View className="flex-row items-center mb-2">
-                    <Text className="text-orange-400 font-bold text-lg">HELLO</Text>
-                    <Text className="text-orange-400 font-light text-lg ml-1">GORGEOUS!</Text>
-                </View>
-                <View className="flex-row items-center mb-4">
-                    <Ionicons name="logo-instagram" size={16} color="white" />
-                    <Text className="text-white text-xs ml-1">@hellogorgeous.app</Text>
-                </View>
-                <Text className="text-white text-base font-semibold w-32">Follow us on Instagram</Text>
-            </View>
+    const [active, setActive] = useState(0);
 
-            {/* Background Image (Mock) */}
-            <Image
-                source={{ uri: 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=80' }}
-                className="w-full h-full absolute right-0 top-0 opacity-80"
-                resizeMode="cover"
-                style={{ left: 80 }} // Shifting image to the right roughly
-            />
+    const onScroll = ({ nativeEvent }: any) => {
+        const slide = Math.round(nativeEvent.contentOffset.x / SNAP_INTERVAL);
+        if (slide !== active) {
+            setActive(slide);
+        }
+    };
+
+    return (
+        <View className="mb-6">
+            <View className="h-48 relative mx-4">
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    onScroll={onScroll}
+                    scrollEventThrottle={16}
+                    decelerationRate="fast"
+                    snapToInterval={SNAP_INTERVAL}
+                    bounces={false}
+                    className="w-full h-full"
+                    contentContainerStyle={{ paddingRight: 32 }}
+                >
+                    {images.map((img, index) => (
+                        <View
+                            key={index}
+                            style={{ width: ITEM_WIDTH, marginRight: index === images.length - 1 ? 0 : GAP }}
+                            className="h-full rounded-xl overflow-hidden relative"
+                        >
+                            <Image
+                                source={img}
+                                className="w-full h-full"
+                                resizeMode="cover"
+                            />
+                        </View>
+                    ))}
+                </ScrollView>
+
+                {/* Pagination Dots */}
+                <View className="absolute bottom-3 w-full flex-row justify-center items-center space-x-2 pointer-events-none">
+                    {images.map((_, i) => (
+                        <View
+                            key={i}
+                            className={`h-1.5 rounded-full transition-all duration-300 shadow-sm ${i === active ? 'w-5 bg-white' : 'w-1.5 bg-white/50'
+                                }`}
+                        />
+                    ))}
+                </View>
+            </View>
         </View>
     );
 }
