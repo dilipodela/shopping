@@ -4,10 +4,12 @@ import React from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useBag } from '../../context/BagContext';
+import { useProductDetail } from '../../context/ProductDetailContext';
 
 export default function BagScreen() {
     const router = useRouter();
     const { bagItems, removeFromBag, totalPrice } = useBag();
+    const { openProduct } = useProductDetail();
     const insets = useSafeAreaInsets();
 
     return (
@@ -40,7 +42,12 @@ export default function BagScreen() {
                 ) : (
                     <View>
                         {bagItems.map((item, index) => (
-                            <View key={`${item.product.id}-${item.size}`} className="flex-row mb-6 bg-white">
+                            <TouchableOpacity
+                                key={`${item.product.id}-${item.size}`}
+                                className="flex-row mb-6 bg-white"
+                                onPress={() => openProduct(item.product)}
+                                activeOpacity={0.7}
+                            >
                                 <View className="h-24 w-24 bg-gray-100 rounded-lg overflow-hidden mr-4">
                                     <Image
                                         source={typeof item.product.image === 'string' ? { uri: item.product.image } : item.product.image}
@@ -68,7 +75,7 @@ export default function BagScreen() {
                                     </View>
                                     <Text className="text-gray-900 font-bold text-base">₹ {item.product.price * item.quantity}.00</Text>
                                 </View>
-                            </View>
+                            </TouchableOpacity>
                         ))}
                     </View>
                 )}
