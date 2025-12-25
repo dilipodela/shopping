@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { FlatList, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { GridCard } from '../components/home/ProductGrid'; // Import GridCard directly
+import { Animated, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import MiniCartBar from '../components/bag/MiniCartBar';
+import { GridCard } from '../components/home/ProductGrid';
 import FilterDrawer from '../components/search/FilterDrawer';
 import { useFavorites } from '../context/FavoritesContext';
 import { useProductDetail } from '../context/ProductDetailContext';
@@ -22,12 +23,18 @@ export default function PopularItemsScreen() {
         selectedColor: null
     });
 
+    const scrollY = React.useRef(new Animated.Value(0)).current;
+
+    const diffClamp = Animated.diffClamp(scrollY, 0, 100);
+    const translateY = diffClamp.interpolate({
+        inputRange: [0, 100],
+        outputRange: [0, 200],
+        extrapolate: 'clamp',
+    });
+
     const { toggleFavorite, isFavorite } = useFavorites();
     const { openProduct } = useProductDetail();
 
-    // 1. Filter only "New" items (Popular)
-    // 2. Apply Custom Filters
-    // 3. Apply Sorting
     const sortedProducts = useMemo(() => {
         let items = PRODUCTS.filter(p => p.isNew);
 
@@ -59,7 +66,6 @@ export default function PopularItemsScreen() {
                 break;
             case 'new':
             default:
-                // Assuming ID order implies newness locally, or just keep original order
                 result = items.sort((a, b) => b.id - a.id);
                 break;
         }
@@ -67,10 +73,8 @@ export default function PopularItemsScreen() {
         return result;
     }, [sortOption, filters]);
 
-    // Component for Header and Sort Bar to usage in FlatList
     const ListHeader = () => (
         <View className="bg-white z-10">
-            {/* Header */}
             <View className="flex-row items-center justify-between px-4 pt-12 pb-4 border-b border-gray-100">
                 <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
                     <Ionicons name="arrow-back" size={24} color="black" />
@@ -81,7 +85,6 @@ export default function PopularItemsScreen() {
                 </TouchableOpacity>
             </View>
 
-            {/* Sort Bar */}
             <View className="flex-row px-4 py-3 border-b border-gray-100 mb-4">
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     <SortButton
@@ -117,29 +120,29 @@ export default function PopularItemsScreen() {
         if (filters.sortOption) {
             setSortOption(filters.sortOption);
         }
+        setFilters(filters);
         setFilterVisible(false);
     };
 
-    // ... (rest of ListHeader)
-
     return (
         <View className="flex-1 bg-white">
-            <FlatList
-                // ... (FlatList props)
+            <Animated.FlatList
                 data={sortedProducts}
                 keyExtractor={(item) => item.id.toString()}
                 numColumns={2}
                 columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 16 }}
                 showsVerticalScrollIndicator={false}
                 ListHeaderComponent={ListHeader}
-
-                /* Optimization Props */
                 initialNumToRender={6}
                 maxToRenderPerBatch={4}
                 windowSize={3}
-                removeClippedSubviews={false} // Stability fix
-
-                contentContainerStyle={{ paddingBottom: 24 }}
+                removeClippedSubviews={false}
+                onScroll={Animated.event(
+                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                    { useNativeDriver: true }
+                )}
+                scrollEventThrottle={16}
+                contentContainerStyle={{ paddingBottom: 100 }}
                 renderItem={({ item }) => (
                     <GridCard
                         product={item}
@@ -158,6 +161,15 @@ export default function PopularItemsScreen() {
                     </View>
                 )}
             />
+
+            <Animated.View
+                className="absolute bottom-6 left-4 right-4 z-50"
+                style={{
+                    transform: [{ translateY: translateY }],
+                }}
+            >
+                <MiniCartBar />
+            </Animated.View>
 
             <FilterDrawer
                 visible={isFilterVisible}

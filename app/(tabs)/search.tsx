@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import React, { useMemo, useState, useRef } from 'react';
+import { Animated, ScrollView, Text, View } from 'react-native';
+import MiniCartBar from '../../components/bag/MiniCartBar';
 import ProductGrid from '../../components/home/ProductGrid'; // Import ProductGrid
 import FilterDrawer from '../../components/search/FilterDrawer';
 import PopularSection from '../../components/search/PopularSection';
@@ -11,6 +12,14 @@ export default function SearchScreen() {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilters, setActiveFilters] = useState<any>(null);
     const [sortOption, setSortOption] = useState<'new' | 'price-asc' | 'price-desc' | 'rating'>('new');
+
+    const scrollY = useRef(new Animated.Value(0)).current;
+    const diffClamp = Animated.diffClamp(scrollY, 0, 100);
+    const translateY = diffClamp.interpolate({
+        inputRange: [0, 100],
+        outputRange: [0, 200],
+        extrapolate: 'clamp',
+    });
 
     const handleApplyFilters = (filters: any) => {
         setActiveFilters(filters);
@@ -100,7 +109,15 @@ export default function SearchScreen() {
                 onSearch={handleSearch}
             />
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
+            <Animated.ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 100 }}
+                onScroll={Animated.event(
+                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                    { useNativeDriver: true }
+                )}
+                scrollEventThrottle={16}
+            >
                 {!isSearchingOrFiltering ? (
                     <PopularSection />
                 ) : (
@@ -121,7 +138,16 @@ export default function SearchScreen() {
                         )}
                     </View>
                 )}
-            </ScrollView>
+            </Animated.ScrollView>
+
+            <Animated.View
+                className="absolute bottom-[85px] left-4 right-4 z-50"
+                style={{
+                    transform: [{ translateY: translateY }],
+                }}
+            >
+                <MiniCartBar />
+            </Animated.View>
 
             <FilterDrawer
                 visible={isFilterVisible}
