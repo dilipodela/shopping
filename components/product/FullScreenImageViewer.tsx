@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, BackHandler, Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
 import ZoomableImage from './ZoomableImage';
 
 const { width, height } = Dimensions.get('window');
@@ -59,46 +59,48 @@ export default function FullScreenImageViewer({ visible, images, initialIndex, o
             animationType="fade"
             onRequestClose={onClose}
         >
-            <View style={styles.container}>
-                {/* Close Button */}
-                <TouchableOpacity
-                    style={styles.closeButton}
-                    onPress={onClose}
-                >
-                    <Ionicons name="close" size={28} color="white" />
-                </TouchableOpacity>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+                <View style={styles.container}>
+                    {/* Close Button */}
+                    <TouchableOpacity
+                        style={styles.closeButton}
+                        onPress={onClose}
+                    >
+                        <Ionicons name="close" size={28} color="white" />
+                    </TouchableOpacity>
 
-                {/* Page Indicator */}
-                <View style={styles.pageIndicator}>
-                    <Text style={styles.pageText}>
-                        {currentIndex + 1} / {images.length}
-                    </Text>
+                    {/* Page Indicator */}
+                    <View style={styles.pageIndicator}>
+                        <Text style={styles.pageText}>
+                            {currentIndex + 1} / {images.length}
+                        </Text>
+                    </View>
+
+                    {/* Main Gallery */}
+                    <FlatList
+                        ref={flatListRef}
+                        data={images}
+                        horizontal
+                        pagingEnabled
+                        showsHorizontalScrollIndicator={false}
+                        renderItem={renderItem}
+                        keyExtractor={(_, index) => index.toString()}
+                        onViewableItemsChanged={onViewableItemsChanged}
+                        viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+                        initialScrollIndex={initialIndex}
+                        /* Memory Optimization Props */
+                        initialNumToRender={1}
+                        maxToRenderPerBatch={1}
+                        windowSize={2}
+                        removeClippedSubviews={true}
+                        getItemLayout={(_, index) => ({
+                            length: width,
+                            offset: width * index,
+                            index,
+                        })}
+                    />
                 </View>
-
-                {/* Main Gallery */}
-                <FlatList
-                    ref={flatListRef}
-                    data={images}
-                    horizontal
-                    pagingEnabled
-                    showsHorizontalScrollIndicator={false}
-                    renderItem={renderItem}
-                    keyExtractor={(_, index) => index.toString()}
-                    onViewableItemsChanged={onViewableItemsChanged}
-                    viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-                    initialScrollIndex={initialIndex}
-                    /* Memory Optimization Props */
-                    initialNumToRender={1}
-                    maxToRenderPerBatch={1}
-                    windowSize={2}
-                    removeClippedSubviews={true}
-                    getItemLayout={(_, index) => ({
-                        length: width,
-                        offset: width * index,
-                        index,
-                    })}
-                />
-            </View>
+            </GestureHandlerRootView>
         </Modal>
     );
 }

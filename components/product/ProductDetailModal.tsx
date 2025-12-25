@@ -1,4 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Asset } from 'expo-asset';
+import * as FileSystem from 'expo-file-system';
 import { Image } from 'expo-image';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, BackHandler, Dimensions, PanResponder, ScrollView, Share, Text, TouchableOpacity, View } from 'react-native';
@@ -6,8 +8,6 @@ import { useBag } from '../../context/BagContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useProductDetail } from '../../context/ProductDetailContext';
 
-import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system/legacy';
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const { width } = Dimensions.get('window');
 
@@ -137,18 +137,17 @@ export default function ProductDetailModal() {
     const handleShare = async () => {
         if (!selectedProduct) return;
 
-        const message = `Check out this ${selectedProduct.name} on Hello Gorgeous!\nPrice: ₹${selectedProduct.price}\n\nGet it here: https://hellogorgeous.app/product/${selectedProduct.id}`;
+        const productUrl = `https://hellogorgeous.app/product/${selectedProduct.id}`;
+        const message = `Check out this ${selectedProduct.name} on Hello Gorgeous!\nPrice: ₹${selectedProduct.price}\n\nGet it here: ${productUrl}`;
 
         try {
             let imageUri = null;
 
             if (typeof selectedProduct.image === 'string') {
                 const extension = selectedProduct.image.split('.').pop()?.split('?')[0];
-                // Ensure valid extension or default to jpg
                 const validExt = ['jpg', 'jpeg', 'png'].includes(extension?.toLowerCase() || '') ? extension : 'jpg';
                 const filename = `share_${selectedProduct.id}.${validExt}`;
-
-                const fileUri = (FileSystem.cacheDirectory || FileSystem.documentDirectory) + filename;
+                const fileUri = ((FileSystem as any).cacheDirectory || (FileSystem as any).documentDirectory) + filename;
 
                 const { uri } = await FileSystem.downloadAsync(selectedProduct.image, fileUri);
                 imageUri = uri;
@@ -159,15 +158,15 @@ export default function ProductDetailModal() {
             }
 
             if (imageUri) {
-                // Try React Native Share first to support Text + Image
                 await Share.share({
-                    message: message,
-                    url: imageUri, // iOS supports local file URI
+                    message: message, // Android (text + link) + iOS (caption if supported)
+                    url: imageUri, // iOS (image attachment)
                     title: `Share ${selectedProduct.name}`
                 });
             } else {
                 await Share.share({
                     message: message,
+                    url: productUrl,
                     title: `Share ${selectedProduct.name}`
                 });
             }
@@ -176,6 +175,7 @@ export default function ProductDetailModal() {
             // Fallback
             await Share.share({
                 message: message,
+                url: productUrl,
             });
         }
     };
