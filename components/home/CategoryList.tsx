@@ -1,5 +1,6 @@
+import { Image } from 'expo-image';
 import React from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 interface CategoryListProps {
     selectedCategory: string | null;
@@ -34,10 +35,12 @@ export default function CategoryList({ selectedCategory, onSelectCategory }: Cat
                                 }}
                             >
                                 <Image
-                                    source={typeof category.image === 'string' ? { uri: category.image } : category.image}
-                                    className="w-full h-full"
+                                    source={category.image}
                                     style={{ width: '100%', height: '100%' }}
-                                    resizeMode="cover"
+                                    contentFit="cover"
+                                    transition={200}
+                                    cachePolicy="disk"
+                                    allowDownscaling={true}
                                 />
                             </View>
                             <Text className={`text-xs font-medium ${isSelected ? 'text-primary font-bold' : 'text-gray-800'}`}>

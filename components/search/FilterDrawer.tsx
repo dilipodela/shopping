@@ -6,22 +6,41 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const { width } = Dimensions.get('window');
 const DRAWER_WIDTH = width * 0.85;
 
+type SortOption = 'new' | 'price-asc' | 'price-desc' | 'rating';
+
 interface FilterDrawerProps {
     visible: boolean;
     onClose: () => void;
     onApply: (filters: any) => void;
+    currentSort: SortOption;
+    initialFilters?: any;
 }
 
-export default function FilterDrawer({ visible, onClose, onApply }: FilterDrawerProps) {
+export default function FilterDrawer({ visible, onClose, onApply, currentSort, initialFilters }: FilterDrawerProps) {
     const insets = useSafeAreaInsets();
     const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
     const fadeAnim = useRef(new Animated.Value(0)).current;
 
     // Filter States
-    const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
+    const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]); // Default full range
     const [selectedColor, setSelectedColor] = useState<string | null>(null);
     const [selectedRating, setSelectedRating] = useState<number | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string>('All');
+    const [selectedSort, setSelectedSort] = useState<SortOption>(currentSort);
+
+    useEffect(() => {
+        if (visible) {
+            setSelectedSort(currentSort);
+
+            // Sync filters if provided
+            if (initialFilters) {
+                if (initialFilters.priceRange) setPriceRange(initialFilters.priceRange);
+                if (initialFilters.selectedCategory) setSelectedCategory(initialFilters.selectedCategory);
+                if (initialFilters.selectedRating) setSelectedRating(initialFilters.selectedRating);
+                if (initialFilters.selectedColor) setSelectedColor(initialFilters.selectedColor);
+            }
+        }
+    }, [visible, currentSort, initialFilters]);
 
     useEffect(() => {
         if (visible) {
@@ -69,7 +88,7 @@ export default function FilterDrawer({ visible, onClose, onApply }: FilterDrawer
     };
 
     const handleApply = () => {
-        onApply({ priceRange, selectedColor, selectedRating, selectedCategory });
+        onApply({ priceRange, selectedColor, selectedRating, selectedCategory, sortOption: selectedSort });
         handleClose();
     };
 
@@ -78,6 +97,7 @@ export default function FilterDrawer({ visible, onClose, onApply }: FilterDrawer
         setSelectedColor(null);
         setSelectedRating(null);
         setSelectedCategory('All');
+        setSelectedSort('new');
     };
 
     if (!visible) return null;
@@ -111,6 +131,32 @@ export default function FilterDrawer({ visible, onClose, onApply }: FilterDrawer
                         </View>
 
                         <ScrollView className="flex-1 px-6 pt-2" showsVerticalScrollIndicator={false}>
+                            {/* Sort By Section */}
+                            <View className="mb-6">
+                                <Text className="text-base font-semibold text-gray-900 mb-3">Sort By</Text>
+                                <View className="flex-row flex-wrap gap-2">
+                                    {[
+                                        { label: 'Newest', value: 'new' },
+                                        { label: 'Price: Low to High', value: 'price-asc' },
+                                        { label: 'Price: High to Low', value: 'price-desc' },
+                                        { label: 'Top Rated', value: 'rating' },
+                                    ].map((opt) => (
+                                        <TouchableOpacity
+                                            key={opt.value}
+                                            onPress={() => setSelectedSort(opt.value as SortOption)}
+                                            className={`px-4 py-2 rounded-full border ${selectedSort === opt.value
+                                                ? 'bg-black border-black'
+                                                : 'bg-white border-gray-200'
+                                                }`}
+                                        >
+                                            <Text className={`${selectedSort === opt.value ? 'text-white font-medium' : 'text-gray-600'}`}>
+                                                {opt.label}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+                            </View>
+
                             {/* Category Section */}
                             <View className="mb-6">
                                 <Text className="text-base font-semibold text-gray-900 mb-3">Category</Text>

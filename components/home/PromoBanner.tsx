@@ -1,5 +1,6 @@
+import { Image } from 'expo-image';
 import React, { useState } from 'react';
-import { Dimensions, Image, ScrollView, View } from 'react-native';
+import { Dimensions, ScrollView, View } from 'react-native';
 
 const { width } = Dimensions.get('window');
 const GAP = 12; // Gap between banners
@@ -29,24 +30,27 @@ export default function PromoBanner() {
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ paddingRight: 32 }}
+                    snapToInterval={SNAP_INTERVAL}
+                    decelerationRate="fast"
+                    bounces={false}
                     onScroll={onScroll}
                     scrollEventThrottle={16}
-                    decelerationRate="fast"
-                    snapToInterval={SNAP_INTERVAL}
-                    bounces={false}
-                    className="w-full h-full"
-                    contentContainerStyle={{ paddingRight: 32 }}
+                    removeClippedSubviews={true}
                 >
                     {images.map((img, index) => (
                         <View
                             key={index}
                             style={{ width: ITEM_WIDTH, marginRight: index === images.length - 1 ? 0 : GAP }}
-                            className="h-full rounded-xl overflow-hidden relative"
+                            className="h-full rounded-xl overflow-hidden relative bg-gray-200"
                         >
                             <Image
                                 source={img}
-                                className="w-full h-full"
-                                resizeMode="cover"
+                                style={{ width: '100%', height: '100%' }}
+                                contentFit="cover"
+                                transition={200}
+                                cachePolicy="disk"
+                                allowDownscaling={true}
                             />
                         </View>
                     ))}

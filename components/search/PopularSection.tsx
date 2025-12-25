@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React, { useRef } from 'react';
-import { Animated, Image, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useProductDetail } from '../../context/ProductDetailContext';
 import { PRODUCTS } from '../../data/products';
@@ -89,7 +90,9 @@ function PopularCard({ item, openProduct, toggleFavorite, isFavorite }: any) {
                         source={typeof item.image === 'string' ? { uri: item.image } : item.image}
                         className="w-full h-full"
                         style={{ width: '100%', height: '100%' }}
-                        resizeMode="contain"
+                        contentFit="contain"
+                        cachePolicy="disk"
+                        allowDownscaling={true}
                     />
                     <View className="absolute top-3 left-3 bg-black/80 px-2 py-1 rounded-md">
                         <Text className="text-[10px] font-bold text-white tracking-widest">NEW</Text>

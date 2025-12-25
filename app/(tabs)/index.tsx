@@ -1,51 +1,74 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Animated, View } from 'react-native';
-// BottomNavBar removed
+
 import MiniCartBar from '../../components/bag/MiniCartBar';
 import CategoryList from '../../components/home/CategoryList';
 import HomeHeader from '../../components/home/HomeHeader';
-import ProductGrid from '../../components/home/ProductGrid';
+import { GridCard } from '../../components/home/ProductGrid';
 import PromoBanner from '../../components/home/PromoBanner';
+import { useFavorites } from '../../context/FavoritesContext';
+import { useProductDetail } from '../../context/ProductDetailContext';
+import { PRODUCTS } from '../../data/products';
 
 export default function Index() {
-  // 1. Track Scroll Position
   const scrollY = useRef(new Animated.Value(0)).current;
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  // 2. Clone ScrollY but clamp the *change* (diff) between 0 and 100
-  // interacting with scroll down pushes it to 100 (hidden)
-  // interacting with scroll up pushes it to 0 (visible)
-  const diffClamp = Animated.diffClamp(scrollY, 0, 100);
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const { openProduct } = useProductDetail();
 
-  // 3. Interpolate ensuring we map the 0-100 range significantly
+  const diffClamp = Animated.diffClamp(scrollY, 0, 100);
   const translateY = diffClamp.interpolate({
     inputRange: [0, 100],
-    outputRange: [0, 200], // Translate 200px down when clamped value is at max
+    outputRange: [0, 200],
     extrapolate: 'clamp',
   });
 
+  const filteredProducts = selectedCategory
+    ? PRODUCTS.filter(p => p.category === selectedCategory)
+    : PRODUCTS;
+
+  const renderHeader = () => (
+    <View>
+      <CategoryList selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
+      <PromoBanner />
+    </View>
+  );
+
   return (
     <View className="flex-1 bg-white relative">
-      {/* Static Header */}
       <HomeHeader />
 
-      {/* Main Scrollable Content */}
-      <Animated.ScrollView
+      <Animated.FlatList
+        data={filteredProducts}
+        keyExtractor={(item) => item.id.toString()}
+        numColumns={2}
+        columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 16 }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
-        // 4. Drive scrollY directly from native scroll event
+
+        /* Optimization Props */
+        initialNumToRender={6}      // Only render visible items initially
+        maxToRenderPerBatch={4}     // Batch small chunks
+        windowSize={3}              // Keep only 1 screen above and 1 screen below in memory (Crucial for iOS)
+        removeClippedSubviews={false} // Stability fix: prevent crashes during interaction
+
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
         )}
         scrollEventThrottle={16}
-      >
-        <CategoryList selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
-        <PromoBanner />
-        <ProductGrid category={selectedCategory} />
-      </Animated.ScrollView>
+        ListHeaderComponent={renderHeader}
+        renderItem={({ item }) => (
+          <GridCard
+            product={item}
+            openProduct={openProduct}
+            toggleFavorite={toggleFavorite}
+            isFavorite={isFavorite}
+          />
+        )}
+      />
 
-      {/* Animated Mini Cart Bar */}
       <Animated.View
         className="absolute bottom-[85px] left-4 right-4 z-50"
         style={{

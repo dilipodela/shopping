@@ -87,6 +87,11 @@ export default function FullScreenImageViewer({ visible, images, initialIndex, o
                     onViewableItemsChanged={onViewableItemsChanged}
                     viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
                     initialScrollIndex={initialIndex}
+                    /* Memory Optimization Props */
+                    initialNumToRender={1}
+                    maxToRenderPerBatch={1}
+                    windowSize={2}
+                    removeClippedSubviews={true}
                     getItemLayout={(_, index) => ({
                         length: width,
                         offset: width * index,

@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, BackHandler, Dimensions, Image, PanResponder, ScrollView, Share, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, BackHandler, Dimensions, PanResponder, ScrollView, Share, Text, TouchableOpacity, View } from 'react-native';
 import { useBag } from '../../context/BagContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useProductDetail } from '../../context/ProductDetailContext';
@@ -233,7 +234,8 @@ export default function ProductDetailModal() {
                     <ScrollView bounces={false}>
                         {/* Carousel */}
                         <View className="relative">
-                            <ScrollView
+                            <Animated.FlatList
+                                data={selectedProduct.images && selectedProduct.images.length > 0 ? selectedProduct.images : [selectedProduct.image]}
                                 horizontal
                                 pagingEnabled
                                 showsHorizontalScrollIndicator={false}
@@ -243,26 +245,30 @@ export default function ProductDetailModal() {
                                 )}
                                 scrollEventThrottle={16}
                                 className="w-full h-96 bg-gray-100"
-                            >
-                                {(selectedProduct.images && selectedProduct.images.length > 0
-                                    ? selectedProduct.images
-                                    : [selectedProduct.image]
-                                ).map((img, index) => (
+                                keyExtractor={(_, index) => index.toString()}
+                                /* Memory Optimization Props */
+                                initialNumToRender={1}
+                                maxToRenderPerBatch={1}
+                                windowSize={2}
+                                removeClippedSubviews={true}
+                                renderItem={({ item: img, index }) => (
                                     <TouchableOpacity
-                                        key={index}
                                         activeOpacity={0.9}
                                         onPress={() => handleImagePress(index)}
                                     >
                                         <View style={{ width: width, height: 384 }}>
                                             <Image
                                                 source={typeof img === 'string' ? { uri: img } : img}
-                                                className="w-full h-full"
-                                                resizeMode="cover"
+                                                style={{ width: '100%', height: '100%' }}
+                                                contentFit="cover"
+                                                transition={200}
+                                                cachePolicy="disk"
+                                                allowDownscaling={true}
                                             />
                                         </View>
                                     </TouchableOpacity>
-                                ))}
-                            </ScrollView>
+                                )}
+                            />
 
                             {/* Pagination Dots */}
                             {(selectedProduct.images && selectedProduct.images.length > 1) && (

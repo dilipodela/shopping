@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import React from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useFavorites } from '../../context/FavoritesContext';
 import { PRODUCTS } from '../../data/products';
 
@@ -43,7 +44,11 @@ export default function FavoritesScreen() {
                                     <Image
                                         source={typeof product.image === 'string' ? { uri: product.image } : product.image}
                                         className="w-full h-full"
-                                        resizeMode="cover"
+                                        style={{ width: '100%', height: '100%' }}
+                                        contentFit="cover"
+                                        transition={200}
+                                        cachePolicy="disk"
+                                        allowDownscaling={true}
                                     />
                                     <TouchableOpacity
                                         className="absolute top-2 right-2 bg-white/80 p-1.5 rounded-full"

@@ -1,9 +1,12 @@
+import { Image } from 'expo-image';
 import React from 'react';
 import { Dimensions, StyleSheet } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 const { width, height } = Dimensions.get('window');
+
+const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 interface ZoomableImageProps {
     uri: string | any;
@@ -32,10 +35,12 @@ export default function ZoomableImage({ uri }: ZoomableImageProps) {
 
     return (
         <GestureDetector gesture={pinch}>
-            <Animated.Image
+            <AnimatedImage
                 source={typeof uri === 'string' ? { uri } : uri}
                 style={[styles.image, animatedStyle]}
-                resizeMode="contain"
+                contentFit="contain"
+                cachePolicy="disk"
+                allowDownscaling={true}
             />
         </GestureDetector>
     );

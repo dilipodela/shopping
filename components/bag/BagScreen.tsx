@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useBag } from '../../context/BagContext';
 import { useProductDetail } from '../../context/ProductDetailContext';
@@ -52,7 +53,11 @@ export default function BagScreen() {
                                     <Image
                                         source={typeof item.product.image === 'string' ? { uri: item.product.image } : item.product.image}
                                         className="w-full h-full"
-                                        resizeMode="cover"
+                                        style={{ width: '100%', height: '100%' }}
+                                        contentFit="cover"
+                                        transition={200}
+                                        cachePolicy="disk"
+                                        allowDownscaling={true}
                                     />
                                 </View>
                                 <View className="flex-1 justify-between py-1">

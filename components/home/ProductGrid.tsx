@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import React, { useRef } from 'react';
-import { Animated, Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Pressable, Text, TouchableOpacity, View } from 'react-native';
 import { PRODUCTS } from '../../data/products';
 
 import { useFavorites } from '../../context/FavoritesContext';
@@ -34,7 +35,7 @@ export default function ProductGrid({ products, category }: ProductGridProps) {
     );
 }
 
-function GridCard({ product, openProduct, toggleFavorite, isFavorite }: any) {
+export function GridCard({ product, openProduct, toggleFavorite, isFavorite }: any) {
     const scaleAnim = useRef(new Animated.Value(1)).current;
 
     // Animation Handlers
@@ -74,18 +75,16 @@ function GridCard({ product, openProduct, toggleFavorite, isFavorite }: any) {
                 className="bg-white rounded-lg shadow-md pb-2"
                 style={{
                     transform: [{ scale: scaleAnim }],
-                    zIndex: scaleAnim.interpolate({
-                        inputRange: [1, 1.05],
-                        outputRange: [0, 10]
-                    })
                 }}
             >
                 <View className="h-48 w-full rounded-t-lg overflow-hidden bg-gray-100 relative">
                     <Image
-                        source={typeof product.image === 'string' ? { uri: product.image } : product.image}
-                        className="w-full h-full"
+                        source={product.image}
                         style={{ width: '100%', height: '100%' }}
-                        resizeMode="cover"
+                        contentFit="cover"
+                        transition={200}
+                        cachePolicy="disk"
+                        allowDownscaling={true}
                     />
                 </View>
                 <View className="p-2">

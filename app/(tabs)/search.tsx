@@ -10,9 +10,13 @@ export default function SearchScreen() {
     const [isFilterVisible, setFilterVisible] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilters, setActiveFilters] = useState<any>(null);
+    const [sortOption, setSortOption] = useState<'new' | 'price-asc' | 'price-desc' | 'rating'>('new');
 
     const handleApplyFilters = (filters: any) => {
         setActiveFilters(filters);
+        if (filters.sortOption) {
+            setSortOption(filters.sortOption);
+        }
     };
 
     const handleSearch = (text: string) => {
@@ -61,8 +65,25 @@ export default function SearchScreen() {
             }
         }
 
+        // 3. Sorting
+        switch (sortOption) {
+            case 'price-asc':
+                result = result.sort((a, b) => a.price - b.price);
+                break;
+            case 'price-desc':
+                result = result.sort((a, b) => b.price - a.price);
+                break;
+            case 'rating':
+                result = result.sort((a, b) => b.rating - a.rating);
+                break;
+            case 'new':
+            default:
+                result = result.sort((a, b) => b.id - a.id);
+                break;
+        }
+
         return result;
-    }, [searchQuery, activeFilters]);
+    }, [searchQuery, activeFilters, sortOption]);
 
     const isSearchingOrFiltering = searchQuery.length > 0 || (activeFilters && (
         activeFilters.selectedCategory !== 'All' ||
@@ -106,6 +127,8 @@ export default function SearchScreen() {
                 visible={isFilterVisible}
                 onClose={() => setFilterVisible(false)}
                 onApply={handleApplyFilters}
+                currentSort={sortOption}
+                initialFilters={activeFilters}
             />
         </View>
     );

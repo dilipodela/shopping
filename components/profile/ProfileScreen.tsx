@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import React from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 const MENU_ITEMS = [
     { icon: 'bag-handle-outline', label: 'My Orders' },
@@ -22,6 +23,9 @@ export default function ProfileScreen() {
                         <Image
                             source={{ uri: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80' }}
                             className="w-full h-full"
+                            contentFit="cover"
+                            cachePolicy="disk"
+                            allowDownscaling={true}
                         />
                     </View>
                     <View>
