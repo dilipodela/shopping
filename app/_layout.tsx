@@ -7,6 +7,7 @@ import { BagProvider } from "../context/BagContext";
 import { DrawerProvider } from "../context/DrawerContext";
 import { FavoritesProvider } from "../context/FavoritesContext";
 import { ProductDetailProvider } from "../context/ProductDetailContext";
+import { UserActivityProvider } from "../context/UserActivityContext";
 import "./global.css";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -19,18 +20,20 @@ export default function RootLayout() {
       <BagProvider>
         <ProductDetailProvider>
           <DrawerProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <Stack screenOptions={{
-                headerShown: false,
-                animation: 'slide_from_right',
-                animationDuration: 250
-              }}>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              </Stack>
-              <ProductDetailModal />
-              <SideDrawer />
-              {isSplashVisible && <SplashScreen onFinish={() => setSplashVisible(false)} />}
-            </GestureHandlerRootView>
+            <UserActivityProvider>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <Stack screenOptions={{
+                  headerShown: false,
+                  animation: 'slide_from_right',
+                  animationDuration: 250
+                }}>
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                </Stack>
+                <ProductDetailModal />
+                <SideDrawer />
+                {isSplashVisible && <SplashScreen onFinish={() => setSplashVisible(false)} />}
+              </GestureHandlerRootView>
+            </UserActivityProvider>
           </DrawerProvider>
         </ProductDetailProvider>
       </BagProvider>

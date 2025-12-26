@@ -1,12 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { Image } from 'expo-image';
+import * as Sharing from 'expo-sharing';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, BackHandler, Dimensions, PanResponder, ScrollView, Share, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, BackHandler, Dimensions, PanResponder, Platform, ScrollView, Share, Text, TouchableOpacity, View } from 'react-native';
 import { useBag } from '../../context/BagContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useProductDetail } from '../../context/ProductDetailContext';
+import { useUserActivity } from '../../context/UserActivityContext';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const { width } = Dimensions.get('window');
@@ -17,6 +19,7 @@ export default function ProductDetailModal() {
     const { selectedProduct, closeProduct } = useProductDetail();
     const { toggleFavorite, isFavorite } = useFavorites();
     const { addToBag, updateQuantity, getItemQuantity } = useBag();
+    const { addToShared, addToRecentlyViewed } = useUserActivity();
 
     // State
     const [selectedSize, setSelectedSize] = useState('M');
@@ -72,6 +75,11 @@ export default function ProductDetailModal() {
             // Reset state
             setSelectedSize('M');
             setShowSuccess(false); // Reset success state
+
+            // Allow a small delay to ensure it doesn't block animation
+            setTimeout(() => {
+                addToRecentlyViewed(selectedProduct);
+            }, 500);
 
             // Slide Up with Smooth Spring
             slideAnim.setValue(SCREEN_HEIGHT);
@@ -137,6 +145,9 @@ export default function ProductDetailModal() {
     const handleShare = async () => {
         if (!selectedProduct) return;
 
+        // Track Shared Item
+        addToShared(selectedProduct);
+
         const productUrl = `https://hellogorgeous.app/product/${selectedProduct.id}`;
         const message = `Check out this ${selectedProduct.name} on Hello Gorgeous!\nPrice: ₹${selectedProduct.price}\n\nGet it here: ${productUrl}`;
 
@@ -147,7 +158,7 @@ export default function ProductDetailModal() {
                 const extension = selectedProduct.image.split('.').pop()?.split('?')[0];
                 const validExt = ['jpg', 'jpeg', 'png'].includes(extension?.toLowerCase() || '') ? extension : 'jpg';
                 const filename = `share_${selectedProduct.id}.${validExt}`;
-                const fileUri = ((FileSystem as any).cacheDirectory || (FileSystem as any).documentDirectory) + filename;
+                const fileUri = (FileSystem.cacheDirectory || FileSystem.documentDirectory) + filename;
 
                 const { uri } = await FileSystem.downloadAsync(selectedProduct.image, fileUri);
                 imageUri = uri;
@@ -158,11 +169,20 @@ export default function ProductDetailModal() {
             }
 
             if (imageUri) {
-                await Share.share({
-                    message: message, // Android (text + link) + iOS (caption if supported)
-                    url: imageUri, // iOS (image attachment)
-                    title: `Share ${selectedProduct.name}`
-                });
+                if (Platform.OS === 'android') {
+                    // Android: Prioritize Image Sharing via Expo Sharing
+                    await Sharing.shareAsync(imageUri, {
+                        mimeType: 'image/jpeg',
+                        dialogTitle: `Share ${selectedProduct.name}`,
+                    });
+                } else {
+                    // iOS: Standard Share with Caption support
+                    await Share.share({
+                        message: message,
+                        url: imageUri,
+                        title: `Share ${selectedProduct.name}`
+                    });
+                }
             } else {
                 await Share.share({
                     message: message,

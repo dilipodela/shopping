@@ -5,7 +5,7 @@ import { Animated, Dimensions, Modal, ScrollView, Text, TouchableOpacity, View }
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDrawer } from '../../context/DrawerContext';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function SideDrawer() {
     const { isDrawerOpen, closeDrawer } = useDrawer();
@@ -41,13 +41,12 @@ export default function SideDrawer() {
     if (!isVisible) return null;
 
     const menuItems = [
-        { icon: 'shirt-outline', label: 'Clothing', route: '/search?category=Clothing' },
-        { icon: 'footsteps-outline', label: 'Shoes', route: '/search?category=Shoes' },
+        { icon: 'share-social-outline', label: 'Shared Items', route: '/shared-items' },
+        { icon: 'time-outline', label: 'Recently Viewed', route: '/recently-viewed' },
+        { icon: 'pricetag-outline', label: 'Price Drop Alerts', route: '/price-alerts' },
+        { icon: 'people-outline', label: 'Refer a Friend', route: '/refer-friend' },
         { icon: 'glasses-outline', label: 'Accessories', route: '/search?category=Accessories' },
-        { icon: 'heart-outline', label: 'My Whishlist', route: '/favorites' },
-        { icon: 'bag-outline', label: 'My Bag', route: '/bag' },
         { icon: 'settings-outline', label: 'Settings', route: '/profile' },
-        { icon: 'help-circle-outline', label: 'Help Center', route: '/profile' },
     ];
 
     const handleNavigation = (route: string) => {
@@ -82,10 +81,11 @@ export default function SideDrawer() {
                     style={{
                         transform: [{ translateX: slideAnim }],
                         width: SCREEN_WIDTH * 0.75,
+                        maxHeight: SCREEN_HEIGHT * 0.85,
                         borderTopRightRadius: 50,
                         borderBottomRightRadius: 50,
                     }}
-                    className="absolute left-0 top-20 bottom-20 bg-gray-50 shadow-2xl z-50 overflow-hidden"
+                    className="absolute left-0 top-20 bg-gray-50 shadow-2xl z-50 overflow-hidden"
                 >
                     <View style={{ paddingTop: insets.top + 20 }} className="px-6 pb-6 bg-white border-b border-gray-100">
                         <View className="flex-row items-center mb-4">
@@ -99,7 +99,7 @@ export default function SideDrawer() {
                         </View>
                     </View>
 
-                    <ScrollView className="flex-1 px-2 py-4" showsVerticalScrollIndicator={false}>
+                    <ScrollView className="px-2 py-4 shrink" showsVerticalScrollIndicator={false}>
                         {menuItems.map((item, index) => (
                             <TouchableOpacity
                                 key={index}
