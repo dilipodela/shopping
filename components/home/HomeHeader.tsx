@@ -5,21 +5,27 @@ import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDrawer } from '../../context/DrawerContext';
 
+
 export default function HomeHeader() {
     const insets = useSafeAreaInsets();
     const { openDrawer } = useDrawer();
     const router = useRouter();
 
     return (
-        <View style={{ paddingTop: insets.top }} className="bg-white pb-4 px-4">
+        <View style={{ paddingTop: insets.top }} className="bg-white pb-4 px-4 pt-0">
             {/* Top Row: Menu and Title */}
-            <View className="flex-row items-center justify-between mb-4 mt-2">
+            <View className="flex-row items-center justify-between mb-4 mt-2 ">
                 <TouchableOpacity onPress={openDrawer}>
                     <Ionicons name="menu-outline" size={28} color="black" />
                 </TouchableOpacity>
-                <Text className="text-xl font-medium text-gray-800 tracking-wide">
+                <Text className="text-2xl font-dancing text-gray-800 tracking-wide">
                     Hello Gorgeous
                 </Text>
+                {/* <Image
+                    source={require('../../assets/images/logoshoping.jpeg')}
+                    style={{ height: 20, width: 180 }}
+                    resizeMode="contain"
+                /> */}
                 <View style={{ width: 28 }} />
             </View>
 

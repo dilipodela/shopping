@@ -1,120 +1,111 @@
-# 🛍️ Modern E-Commerce React Native App
+# Hello Gorgeous - Shopping App
 
-A premium, fluid, and animated e-commerce application built with **Expo**, **React Native**, and **NativeWind**. 
+Welcome to the **Hello Gorgeous** mobile application! This is a modern e-commerce app built for iOS and Android using **React Native** (Expo).
 
-This project demonstrates advanced UI/UX patterns including spring physics animations, floating side drawers, gesture-based modals, and smart state management.
-
----
-
-## 🚀 Tech Stack
-
-- **Framework**: [Expo](https://expo.dev/) (React Native)
-- **Routing**: [Expo Router](https://docs.expo.dev/router/introduction/) (File-based routing)
-- **Styling**: [NativeWind](https://www.nativewind.dev/) (Tailwind CSS for React Native)
-- **Icons**: [Ionicons](https://icons.expo.fyi/)
-- **Animations**: `Animated` API (Spring Physics) & `PanResponder` (Gestures)
+This guide is written for new developers. It explains **how the app works**, **where everything is located**, and **how to run it**.
 
 ---
 
-## 📂 Project Structure & Code Map
-
-Here is exactly where everything lives. If you need to edit something, look here first.
-
-### 1. **App Routing (`/app`)**
-The entry point and screens of the application.
-- **[`_layout.tsx`](app/_layout.tsx)**: The **Root Layout**. It wraps the app in *Context Providers* (`BagProvider`, `DrawerProvider`, etc.) and sets up the global stack navigator.
-- **[`index.tsx`](app/index.tsx)**: The **Home Screen**. Assembles the Header, Banners, and Product Grid.
-- **[`search.tsx`](app/search.tsx)**: The **Search Screen**.
-- **[`bag.tsx`](app/bag.tsx)**: The **Shopping Bag Screen**.
-- **[`favorites.tsx`](app/favorites.tsx)**: The **Wishlist Screen**.
-
-### 2. **State Management (`/context`)**
-We use React Context API to manage global state without complex libraries like Redux.
-- **[`BagContext.tsx`](context/BagContext.tsx)**: 
-    - Manages the cart (`bagItems`).
-    - Logic for **Smart Add-to-Bag**: `addToBag`, `updateQuantity`, `getItemQuantity`, and `totalPrice`.
-- **[`FavoritesContext.tsx`](context/FavoritesContext.tsx)**: 
-    - Simple toggle logic for liking products.
-- **[`ProductDetailContext.tsx`](context/ProductDetailContext.tsx)**: 
-    - Controls which product is currently showing in the **Product Modal**.
-- **[`DrawerContext.tsx`](context/DrawerContext.tsx)**: 
-    - Controls the open/closed state of the **Side Drawer**.
-
-### 3. **UI Components (`/components`)**
-Reusable UI blocks, organized by feature.
-
-#### **Home Components** (`/components/home`)
-- **[`HomeHeader.tsx`](components/home/HomeHeader.tsx)**: The top bar with the "Hamburger" menu icon and Search bar.
-- **[`ProductGrid.tsx`](components/home/ProductGrid.tsx)**: The main grid displaying product cards.
-- **[`PromoBanner.tsx`](components/home/PromoBanner.tsx)**: The horizontal scrollable banners (New Collection).
-
-#### **Product & Modal** (`/components/product`)
-- **[`ProductDetailModal.tsx`](components/product/ProductDetailModal.tsx)**: **(CRITICAL FILE)** 
-    - This is the interactive sheet that pops up when you click a product.
-    - **Animations**: Contains the logic for the **Spring Bounce** effect (`damping: 15`, `stiffness: 120`).
-    - **Gestures**: Contains `PanResponder` logic for the "Drag Down to Dismiss" feature.
-    - **Logic**: Contains the **Smart Add-to-Bag Button** (switches to `+ 1 -` if in bag).
-
-#### **Side Drawer** (`/components/common`)
-- **[`SideDrawer.tsx`](components/common/SideDrawer.tsx)**: 
-    - A custom-built drawer (not the standard React Navigation one).
-    - **Floating Design**: It sits 80px from top/bottom for a "card" look.
-    - **Animation**: Slides in smoothly using `Animated.spring`.
-
-#### **Bag** (`/components/bag`)
-- **[`BagScreen.tsx`](components/bag/BagScreen.tsx)**: Displays the list of items in the cart and the checkout button.
-
-### 4. **Data (`/data`)**
-- **[`products.ts`](data/products.ts)**: The "Mock Database". All product info, images, and prices are stored here.
-
----
-
-## 🌟 Key Features & Implementation Details
-
-### 1. Springy Product Modal 🥎
-When you tap a product, it doesn't just slide up; it **bounces**.
-- **Code**: `components/product/ProductDetailModal.tsx`
-- **Tech**: We use `Animated.spring` with low damping (`15`) to create a playful overshoot effect.
-
-### 2. Smart Add-to-Bag Button 🛒
-The button is intelligent.
-- **State 1**: Item not in bag -> Shows generic "Add to Bag" button.
-- **State 2**: Item in bag -> Morph into a **Quantity Controller** (`- 1 +`).
-- **Code**: `components/product/ProductDetailModal.tsx` (UI) + `context/BagContext.tsx` (Logic).
-
-### 3. Floating Side Drawer 🍔
-A custom "Hamburger Menu" that looks like a floating sheet.
-- **Code**: `components/common/SideDrawer.tsx`
-- **Tech**: Uses a transparent Modal + Absolute Positioning. Wrapped in a `ScrollView` to ensure it works on small screens.
-
-### 4. Gestures 👆
-You can **drag** the Product Modal down to close it.
-- **Code**: `components/product/ProductDetailModal.tsx` (`PanResponder`).
-
----
-
-## 🏃‍♂️ How to Run
+## 🚀 Quick Start
 
 1.  **Install Dependencies**:
     ```bash
     npm install
+    # or
+    yarn install
     ```
-2.  **Start the App**:
+
+2.  **Run the App**:
     ```bash
-    npx expo start --clear
+    npx expo start
     ```
-3.  **Run on Device**:
-    - Scan the QR code with your phone (Expo Go app).
-    - Or press `a` for Android Emulator / `i` for iOS Simulator.
+    - Scan the QR code with your phone (using Expo Go app).
+    - Or press `a` to run on Android Emulator.
+    - Or press `i` to run on iOS Simulator.
 
 ---
 
-## 🛠️ Customization Guide
+## 📂 Project Structure (Where things are)
 
-- **Change Colors**: Go to `tailwind.config.js`.
-- **Add Products**: Edit `data/products.ts`.
-- **Adjust Animation Bounce**: Go to `components/product/ProductDetailModal.tsx` and change `damping` (lower = bouncier).
+Here is a map of the folders so you know where to look:
+
+### 1. `app/` (The Screens)
+This folder uses **Expo Router**. The files here correspond to screens in the app.
+- **`(tabs)/`**: Contains the main bottom tab navigation screens:
+    - `index.tsx` (Home Screen)
+    - `search.tsx` (Search Screen)
+    - `bag.tsx` (Shopping Bag Screen)
+    - `favorites.tsx` (Favorites Screen)
+    - `profile.tsx` (Profile Screen)
+- **`_layout.tsx`**: The main setup file that wraps the entire app (Providers, Navigation settings).
+- **`product-details.tsx`**: Individual screens that open separately.
+
+### 2. `components/` ( The Building Blocks)
+We break down screens into smaller, reusable pieces.
+- **`common/`**: Things used everywhere (e.g., `SideDrawer.tsx` for the side menu, `OnboardingScreen.tsx`).
+- **`home/`**: Components specifically for the Home screen (`PromoBanner`, `CategoryList`, `ProductGrid`).
+- **`product/`**: Components for the product view (`ProductDetailModal`, `FullScreenImageViewer`).
+- **`bag/`**: Components for the cart (`BottomBar`, `FloatingCartBar`).
+
+### 3. `context/` (The Brains / State)
+This is where we store data that needs to be accessed by many screens.
+- **`BagContext.tsx`**: Remembers what items are in your cart.
+- **`FavoritesContext.tsx`**: Remembers your liked items.
+- **`UserActivityContext.tsx`**: Tracks recently viewed and shared items.
+- **`ProductDetailContext.tsx`**: Controls the "Pop-up" product card.
+
+### 4. `data/`
+- **`products.ts`**: Contains the dummy data for products (names, prices, images).
 
 ---
 
-*Built with ❤️ by your AI Agent.*
+## 🔄 Data Flow & Communication (How info moves)
+
+Understanding **how data moves** is key to understanding this app. We don't just pass data from parent to child; we use **Context** heavily.
+
+### 1. Global State (The "Context" API)
+Imagine a "cloud" of data floating above the entire app. Any screen can access this data without needing it passed down.
+- **Bag/Cart Data**: When you add an item to the bag in `ProductDetailModal`, the `BagContext` updates. The `BagScreen` automatically listens to this context and updates its list instantly.
+    - *Flow*: `ProductModal` -> calls `addToBag()` -> `BagContext` updates -> `BagScreen` re-renders.
+- **Favorites**: Similar to the Bag. Toggling a heart icon updates `FavoritesContext`.
+- **Product Details**: Instead of navigating to a new page with a URL parameter, we often set the `selectedProduct` in `ProductDetailContext`. The global `ProductDetailModal` (living in the root layout) "sees" this change and slides up the modal.
+
+### 2. Parent -> Child (Props)
+For simple components, we pass data down directly.
+- *Example*: `ProductGrid` passes a single `product` object to `ProductCard`. The card simply displays what it is given.
+
+### 3. Screen-to-Screen (Navigation)
+- **Expo Router**: We use file-based routing.
+- **Passing Params**: For screens like `/shared-items`, we navigate using `router.push("/shared-items")`. If we needed to pass an ID, we would use `router.push("/product/123")` and read it with `useLocalSearchParams()`.
+
+---
+
+---
+
+## ✨ Key Features
+
+- **3D Digital Twin**: Create a lifelike 3D avatar from 2D photos.
+- **Virtual Try-On**: Visualize outfits on your digital twin before buying.
+- **Modern Onboarding**: Smooth introduction flow with slide animations.
+- **Dynamic Home Screen**: Personalized greetings and "Dancing Script" typography.
+- **Smart Cart & Favorites**: Real-time updates across screens.
+
+---
+
+## 🛠 Tech Stack
+
+- **Framework**: React Native (via Expo)
+- **Navigation**: Expo Router (File-based routing)
+- **Styling**: NativeWind (Tailwind CSS for React Native)
+- **Fonts**: Expo Google Fonts (Dancing Script)
+- **Icons**: Ionicons
+
+---
+
+## 💡 Tips for New Developers
+
+- **Adding a new Screen**: Create a new `.tsx` file in the `app/` folder. It becomes a page automatically!
+- **Changing Colors**: Check `tailwind.config.js` or standard Tailwind classes.
+- **Debugging**: If something breaks, check the terminal where `npx expo start` is running.
+
+Happy Coding! 🚀

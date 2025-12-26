@@ -8,6 +8,9 @@ module.exports = {
       colors: {
         primary: "#191b87ff",
       },
+      fontFamily: {
+        dancing: ['DancingScript_700Bold'],
+      },
     },
   },
   plugins: [],
